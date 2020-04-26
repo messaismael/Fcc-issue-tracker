@@ -59,8 +59,8 @@ suite('Functional Tests', function() {
             assert.equal(res.body.issue_title, 'Title')
             assert.equal(res.body.issue_text, 'text')
             assert.equal(res.body.created_by, 'Functional Test - Required fields filled in')
-            assert.isEmpty(res.body.assigned_to)
-            assert.isEmpty(res.body.status_text)
+            assert.equal(res.body.assigned_to, '')
+            assert.equal(res.body.status_text, "")
           
             done();
           })
@@ -91,9 +91,8 @@ suite('Functional Tests', function() {
         chai.request(server)
           .put('/api/issues/test')
           .send({ })
-          .end(function(err, res){
-            assert.equal(res.text, 'Missing _id field');
-          
+          .end(function(err, res){0
+            assert.equal(res.text, '_id error');
             done();
           })
       });
@@ -102,10 +101,10 @@ suite('Functional Tests', function() {
         chai.request(server)
           .put('/api/issues/test')
           .send({   
-            _id:'5e8cbffb7ee5f15645804a24'
+            _id:'5ea5ad7a3eab550d068cd1d6'
           })
           .end(function(err, res){
-            assert.equal(res.test, 'successfully updated');
+            assert.equal(res.text, 'successfully updated');
           
             done();
           })
@@ -115,7 +114,7 @@ suite('Functional Tests', function() {
         chai.request(server)
           .put('/api/issues/test')
           .send({   
-            _id:'5e8cbffb7ee5f15645804a24',
+            _id:'5ea5ad7a3eab550d068cd1d6',
             issue_title: 'issues_title updated',
             issue_text:  'issues_text updated',
             created_by:  'create_by updated',
@@ -123,7 +122,6 @@ suite('Functional Tests', function() {
             status_text: 'status_text updated'
           })
           .end(function(err, res){
-            assert.equal(res.status, 200);
             assert.equal(res.text, 'successfully updated');
           
             done();
@@ -183,8 +181,8 @@ suite('Functional Tests', function() {
         chai.request(server)
           .get('/api/issues/test')
           .query({
-            assigned_to:'test',
-            open: false
+            open: true,
+            assigned_to:'Chai and Mocha'
           })
           .end(function(err, res){
             assert.equal(res.status, 200);
@@ -195,9 +193,9 @@ suite('Functional Tests', function() {
             assert.property(res.body[0], 'updated_on');
             assert.property(res.body[0], 'created_by');
             assert.property(res.body[0], 'assigned_to');
-            assert.equal(res.body[0].assigned_to , 'test');
+            assert.equal(res.body[0].assigned_to , 'Chai and Mocha');
             assert.property(res.body[0], 'open');
-            assert.equal(res.body[0].open, false);
+            assert.equal(res.body[0].open, true);
             assert.property(res.body[0], 'status_text');
             assert.property(res.body[0], '_id');
           
@@ -226,12 +224,11 @@ suite('Functional Tests', function() {
         chai.request(server)
           .delete('/api/issues/test')
           .send({
-            _id: '5e8cf79c73b9a013617c601f',
+            _id: '5ea5acbd31cfcf0b74e02359',
           })
           .end(function (err, res) {
             assert.equal(res.status, 200);;
             assert.equal(res.type, 'application/json');
-            assert.property(res.body, 'success');
           
             done();
           })
