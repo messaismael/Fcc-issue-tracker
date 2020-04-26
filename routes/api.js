@@ -9,8 +9,6 @@
 'use strict';
 
 var expect = require('chai').expect;
-var MongoClient = require('mongodb');
-var ObjectId = require('mongodb').ObjectID;
 var mongoose = require('mongoose');
 
 
@@ -43,18 +41,19 @@ module.exports = function (app) {
       let filter = req.query;
       if(String(filter.open)!=='undefined' && String(filter.assigned_to)!=='undefined'){
         let projectIssues = await ProjectModel.find({projectName: project, open: filter.open, assigned_to: filter.assigned_to}).select('-projectName -__v');
-        res.send(projectIssues);      
+        res.json(projectIssues);      
       }
       else if(String(filter.open)!=='undefined'){
         let projectIssues = await ProjectModel.find({projectName: project, open: filter.open}).select('-projectName -__v');
-        res.send(projectIssues);
+        res.json(projectIssues);
       }
       else if(String(filter.assigned_to)!=='undefined'){
         let projectIssues = await ProjectModel.find({projectName: project, assigned_to: filter.assigned_to}).select('-projectName -__v');
-        res.send(projectIssues);
+        res.json(projectIssues);
+      }else{
+        let projectIssues = await ProjectModel.find({projectName: project}).select('-projectName -__v');
+        res.json(projectIssues);
       }
-      let projectIssues = await ProjectModel.find({projectName: project}).select('-projectName -__v');
-      res.send(projectIssues);
     })
     
     .post(async function (req, res){
